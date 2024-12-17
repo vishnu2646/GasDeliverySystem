@@ -1,11 +1,15 @@
 const {getDefaultConfig, mergeConfig} = require('@react-native/metro-config');
 
-/**
- * Metro configuration
- * https://reactnative.dev/docs/metro
- *
- * @type {import('metro-config').MetroConfig}
- */
-const config = {};
+const defaultConfig = getDefaultConfig(__dirname);
 
-module.exports = mergeConfig(getDefaultConfig(__dirname), config);
+// Add "react-native-webview" as an assetExts extension
+defaultConfig.resolver.assetExts.push('webview');
+
+module.exports = mergeConfig(defaultConfig, {
+    resolver: {
+        sourceExts: [...defaultConfig.resolver.sourceExts, 'cjs'],
+        extraNodeModules: {
+            'react-native-webview': require.resolve('react-native-webview'),
+        },
+    },
+});
