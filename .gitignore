@@ -2,8 +2,8 @@
 #
 .DS_Store
 
-ios
-android
+ios/
+android/
 
 # Xcode
 #

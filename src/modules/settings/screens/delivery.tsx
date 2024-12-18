@@ -1,7 +1,7 @@
 import React, { useContext, useEffect, useRef, useState } from 'react';
 import { StyleSheet, Text, View, ScrollView, TouchableOpacity, Alert } from 'react-native';
-import { ApiContext } from '../../../store/ApiContext';
-import { AppContext } from '../../../store/AppContext';
+import { ApiContext } from '../../../contexts/ApiContext';
+import { AppContext } from '../../../contexts/AppContext';
 import { NavigationProp, RouteProp, useNavigation, useRoute } from '@react-navigation/native';
 import { RootStackParamList } from '../../../navigators/types';
 import { COLORS } from '../../../theme/theme';

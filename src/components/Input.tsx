@@ -1,6 +1,7 @@
-import React from 'react';
-import { StyleSheet, Text, View, TextInput, KeyboardType } from 'react-native';
+import React, { useState } from 'react';
+import { StyleSheet, Text, View, TextInput, KeyboardType, TouchableOpacity, Image } from 'react-native';
 import { COLORS } from '../theme/theme';
+import { icons } from '../constants';
 
 type IInputProps = {
     title: String,
@@ -12,7 +13,7 @@ type IInputProps = {
 };
 
 const CustomInput = (props: IInputProps) => {
-    // const [showPassword, setShowPassword] = useState<boolean>(false);
+    const [showPassword, setShowPassword] = useState<boolean>(false);
     return (
         <View style={styles.inputContainer}>
             <Text style={styles.labelText}>{props.title}</Text>
@@ -25,8 +26,20 @@ const CustomInput = (props: IInputProps) => {
                     placeholderTextColor={COLORS.primaryLightGreyHex}
                     onChangeText={props.handleChangeText}
                     style={styles.input}
-                    // secureTextEntry={props.title === 'Password' && !showPassword}
+                    secureTextEntry={props.title === 'OTP' && !showPassword}
                 />
+
+                { props.title === 'OTP' && (
+                    <TouchableOpacity
+                        onPress={() => setShowPassword(!showPassword) }
+                    >
+                        <Image
+                            source={!showPassword ? icons.eye : icons.eyeHide }
+                            resizeMode="contain"
+                            style={styles.icon}
+                        />
+                    </TouchableOpacity>
+                )}
             </View>
         </View>
     );
@@ -59,5 +72,12 @@ const styles = StyleSheet.create({
         color: '#FFFFFF',
         height: 64,
         fontFamily: 'Poppins-Light',
+    },
+    icon: {
+        width: 30,
+        height: 30,
+        position: 'absolute',
+        bottom: 20,
+        right: 0,
     },
 });

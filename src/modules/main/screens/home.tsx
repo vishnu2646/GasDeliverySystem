@@ -1,92 +1,112 @@
-import React, { useContext, useEffect, useState } from 'react';
+import React, { useCallback, useContext, useEffect } from 'react';
 import { StyleSheet, Text, View, ScrollView, Dimensions } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import axios from 'axios';
 import { COLORS } from '../../../theme/theme';
-import { AppContext } from '../../../store/AppContext';
-import { ApiContext } from '../../../store/ApiContext';
-import { IGasStocks, ITotals } from '../types/types';
 import { Header } from '../components';
 import { Loader, WrapperContainer } from '../../../components';
+import { AppContext } from '../../../contexts/AppContext';
+import { ApiContext } from '../../../contexts/ApiContext';
+import { NavigationProp, useFocusEffect, useNavigation } from '@react-navigation/native';
+import { RootStackParamList } from '../../../navigators/types';
+import { useAppDispatch, useAppSelector } from '../../../hooks/hooks';
+import { fetchStocks } from '../../../redux/reducers/stocks';
+import { GestureHandlerRootView, RefreshControl } from 'react-native-gesture-handler';
 
 const windowWidth = Dimensions.get('window').width;
 
 const Home = () => {
 
+    const navigation = useNavigation<NavigationProp<RootStackParamList>>();
+
     const { currentUser } = useContext(AppContext);
 
     const { apiUrl } = useContext(ApiContext);
 
-    const [stockList, setStockList] = useState<IGasStocks[]>([]);
+    const dispatch = useAppDispatch();
 
-    const [totals, setTotals] = useState<ITotals>();
+    const { loading, data, error } = useAppSelector(state => state.stocks);
 
-    const [isLoading, setIsLoading] = useState<boolean>(false);
-
-    const loadStockList = async () => {
-        setIsLoading(true);
-
-        try {
-            const url = `${apiUrl?.url}/GetDeliveryPortal?ClId=${currentUser?.CLID}&AuthCode=${currentUser?.OTP}&databaseKey=${apiUrl?.databaseKey}`;
-            const response = await axios.get(url);
-            if(response.data && response.data.GetDeliveryPortaljs && response.data.GetDeliveryPortaljs.Table.length > 0) {
-                setStockList(response.data.GetDeliveryPortaljs.Table);
-                setTotals(response.data.GetDeliveryPortaljs.Table3[0]);
-            }
-            setIsLoading(false);
-        } catch (error) {
-            console.error(error);
-            setIsLoading(false);
-        } finally {
-            setIsLoading(false);
-        }
+    const renderTotals = () => {
+        const totals = data && data.GetDeliveryPortaljs && data.GetDeliveryPortaljs.Table3[0];
+        return (
+            <>
+                <Text style={styles.size}>Cash: <Text style={styles.count}>{totals?.Cash}</Text></Text>
+                <Text style={styles.size}>Others: <Text style={styles.count}>{totals?.Others}</Text></Text>
+                <Text style={styles.size}>Total: <Text style={styles.count}>{totals?.Total}</Text></Text>
+            </>
+        );
     };
 
-    useEffect(() => {
-        if(currentUser && Object.values(currentUser).length > 0) {
-            loadStockList();
+    const onRefresh = useCallback(() => {
+        if(apiUrl && currentUser) {
+            dispatch(fetchStocks({ apiUrl: apiUrl, currentUser }));
         }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [currentUser]);
+    }, [apiUrl, currentUser, dispatch]);
+
+    useEffect(() => {
+        if(currentUser && apiUrl) {
+            dispatch(fetchStocks({ apiUrl: apiUrl, currentUser }));
+        }
+    }, [dispatch, currentUser, apiUrl]);
+
+    useFocusEffect(
+        useCallback(() => {
+            if(!currentUser) {
+                navigation.navigate('Login');
+            }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+        }, [])
+    );
+
+    if(loading) {
+        return <Loader isLoading={loading} />;
+    }
+
+    if(error) {
+        return (
+            <View>
+                <Text style={styles.errorTemplate}>Failed to Load Data.</Text>
+            </View>
+        );
+    }
 
     return (
-        <SafeAreaView>
-            <WrapperContainer>
-                <Header />
-                <View style={styles.priceContainer}>
-                    <Text style={styles.size}>Cash: <Text style={styles.count}>{totals?.Cash}</Text></Text>
-                    <Text style={styles.size}>Others: <Text style={styles.count}>{totals?.Others}</Text></Text>
-                    <Text style={styles.size}>Total: <Text style={styles.count}>{totals?.Total}</Text></Text>
-                </View>
-                <View>
-                    <Text style={styles.topic}>Stocks in Vehicle</Text>
-                </View>
-                <ScrollView
-                    showsVerticalScrollIndicator={false}
-                >
-                    {stockList && stockList.map((stock, index) => (
-                        <View style={styles.card} key={index}>
-                            <View style={styles.cardHead}>
-                                <View style={styles.imageContainer}>
-                                    <Text style={styles.cylindarSize}>{stock.ItemNo}</Text>
+        <GestureHandlerRootView>
+            <SafeAreaView>
+                <WrapperContainer>
+                    <Header />
+                    <View style={styles.priceContainer}>
+                        {renderTotals()}
+                    </View>
+                    <View>
+                        <Text style={styles.topic}>Stocks in Vehicle</Text>
+                    </View>
+                    <ScrollView
+                        showsVerticalScrollIndicator={false}
+                        refreshControl={
+                            <RefreshControl refreshing={loading} onRefresh={onRefresh} />
+                        }
+                    >
+                        {data && data.GetDeliveryPortaljs && data.GetDeliveryPortaljs.Table.map((stock: any, index: number) => (
+                            <View style={styles.card} key={index}>
+                                <View style={styles.cardHead}>
+                                    <View style={styles.imageContainer}>
+                                        <Text style={styles.cylindarSize}>{stock.ItemNo}</Text>
+                                    </View>
+                                    <View>
+                                        <Text style={styles.size}>Stock in vehicle<Text style={styles.count}> {stock.StkInVhl}</Text></Text>
+                                    </View>
                                 </View>
-                                <View>
-                                    <Text style={styles.size}>Stock in vehicle<Text style={styles.count}> {stock.StkInVhl}</Text></Text>
+                                <View style={styles.content}>
+                                    <Text style={styles.size}>Opening: <Text style={styles.count}>{stock.Opening}</Text></Text>
+                                    <Text style={styles.size}>Despatch: <Text style={styles.count}>{stock.Despatch}</Text></Text>
                                 </View>
                             </View>
-                            <View>
-                                <Text style={styles.size}>Cylinder Size <Text style={styles.count}>{stock.ItemNo}</Text></Text>
-                            </View>
-                            <View style={styles.content}>
-                                <Text style={styles.size}>Opening: <Text style={styles.count}>{stock.Opening}</Text></Text>
-                                <Text style={styles.size}>Despatch: <Text style={styles.count}>{stock.Despatch}</Text></Text>
-                            </View>
-                        </View>
-                    ))}
-                </ScrollView>
-                {isLoading && <Loader isLoading={isLoading} setIsLoading={setIsLoading} />}
-            </WrapperContainer>
-        </SafeAreaView>
+                        ))}
+                    </ScrollView>
+                </WrapperContainer>
+            </SafeAreaView>
+        </GestureHandlerRootView>
     );
 };
 
@@ -98,7 +118,7 @@ const styles = StyleSheet.create({
         fontSize: 20,
         letterSpacing: 2,
         textTransform: 'uppercase',
-        marginVertical: 20,
+        marginTop: 20,
     },
     card: {
         width: windowWidth - 35,
@@ -161,5 +181,8 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         flexDirection: 'row',
         justifyContent: 'space-between',
+    },
+    errorTemplate: {
+        color: COLORS.primaryWhiteHex,
     },
 });

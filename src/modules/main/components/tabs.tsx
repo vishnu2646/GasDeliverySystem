@@ -5,7 +5,7 @@ import { Dimensions, StyleSheet, View, Text, FlatList, TouchableOpacity } from '
 import { ScrollView } from 'react-native';
 import { COLORS } from '../../../theme/theme';
 import { getRequest } from '../service/apiService';
-import { ApiContext } from '../../../store/ApiContext';
+import { ApiContext } from '../../../contexts/ApiContext';
 import ToastManager, { Toast } from 'toastify-react-native';
 
 const windowWidth = Dimensions.get('window').width;
@@ -108,7 +108,10 @@ const Tabs = ({ deliveryList, reciptList, updateDeliveryList, updateReciptList }
                                         <Text style={styles.rightText}>{item.Entrytime}</Text>
                                     </View>
                                     <View style={styles.deliveryContent}>
-                                        <Text style={styles.size}>Payment Mode <Text style={styles.count}>{item.PayMode}</Text> </Text>
+                                        <View>
+                                            <Text style={styles.size}>Payment Mode <Text style={styles.count}>{item.PayMode}</Text> </Text>
+                                            <Text style={styles.size}>Amount <Text style={styles.count}>{item.Amount}</Text> </Text>
+                                        </View>
                                         <TouchableOpacity
                                             onPress={() => deleteList(item.RsId, 'recipt')}
                                         >
@@ -138,10 +141,10 @@ const styles = StyleSheet.create({
         marginRight: 20,
     },
     reciptCard: {
-        height: 100,
+        height: 'auto',
     },
     deliveryCard: {
-        height: 200,
+        height: 'auto',
     },
     cardHead: {
         display: 'flex',
@@ -171,7 +174,6 @@ const styles = StyleSheet.create({
         fontSize: 18,
         fontWeight: '600',
         letterSpacing: 1,
-        marginBottom: 20,
         fontFamily: 'Poppins-Light',
     },
     size: {
@@ -191,7 +193,7 @@ const styles = StyleSheet.create({
     deliveryContent: {
         display: 'flex',
         flexDirection: 'row',
-        paddingHorizontal: 10,
+        paddingHorizontal: 0,
         width: '100%',
         justifyContent: 'space-between',
     },

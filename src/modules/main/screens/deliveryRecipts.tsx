@@ -4,8 +4,8 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { Loader, WrapperContainer } from '../../../components';
 import { COLORS } from '../../../theme/theme';
 import { getRequest } from '../service/apiService';
-import { ApiContext } from '../../../store/ApiContext';
-import { AppContext } from '../../../store/AppContext';
+import { ApiContext } from '../../../contexts/ApiContext';
+import { AppContext } from '../../../contexts/AppContext';
 import Tabs from '../components/tabs';
 
 const DeliveryRecipts = () => {

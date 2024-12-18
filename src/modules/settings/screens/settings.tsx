@@ -3,8 +3,8 @@ import { StyleSheet, Text, ScrollView, TouchableOpacity, View, Alert } from 'rea
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { NavigationProp, useNavigation } from '@react-navigation/native';
 import { COLORS } from '../../../theme/theme';
-import { AppContext } from '../../../store/AppContext';
-import { ApiContext } from '../../../store/ApiContext';
+import { AppContext } from '../../../contexts/AppContext';
+import { ApiContext } from '../../../contexts/ApiContext';
 import { RootStackParamList } from '../../../navigators/types';
 import CustomInput from '../../../components/Input';
 import SettingsButton from '../components/button';

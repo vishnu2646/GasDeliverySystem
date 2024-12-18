@@ -4,7 +4,7 @@ import { COLORS } from '../theme/theme';
 
 type Props = {
     isLoading: boolean,
-    setIsLoading: (value: boolean) => any,
+    setIsLoading?: (value: boolean) => any,
 };
 
 const Loader = (props: Props) => {
@@ -13,7 +13,7 @@ const Loader = (props: Props) => {
             transparent={true}
             animationType="fade"
             visible={props.isLoading}
-            onRequestClose={() => props.setIsLoading(false)}
+            onRequestClose={() => props.isLoading}
         >
             <View style={styles.overlay}>
                 <ActivityIndicator size="large" color={COLORS.primaryOrangeHex} />

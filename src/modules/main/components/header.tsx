@@ -3,7 +3,7 @@ import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
 import { COLORS } from '../../../theme/theme';
 import { NavigationProp, useNavigation } from '@react-navigation/native';
 import { RootStackParamList } from '../../../navigators/types';
-import { AppContext } from '../../../store/AppContext';
+import { AppContext } from '../../../contexts/AppContext';
 
 const Header = () => {
     const naviation = useNavigation<NavigationProp<RootStackParamList>>();

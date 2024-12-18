@@ -3,7 +3,7 @@ import React, { useContext, useEffect } from 'react';
 import { StyleSheet, Text } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { COLORS } from '../../../theme/theme';
-import { AppContext } from '../../../store/AppContext';
+import { AppContext } from '../../../contexts/AppContext';
 import { NavigationProp, useNavigation } from '@react-navigation/native';
 import { RootStackParamList } from '../../../navigators/types';
 

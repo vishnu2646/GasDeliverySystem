@@ -4,8 +4,8 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import RNPrint from 'react-native-print';
 
 import { COLORS } from '../../../theme/theme';
-import { ApiContext } from '../../../store/ApiContext';
-import { AppContext } from '../../../store/AppContext';
+import { ApiContext } from '../../../contexts/ApiContext';
+import { AppContext } from '../../../contexts/AppContext';
 import { NavigationProp, RouteProp, useNavigation, useRoute } from '@react-navigation/native';
 import { RootStackParamList } from '../../../navigators/types';
 import { IPrintResponse } from '../types/types';

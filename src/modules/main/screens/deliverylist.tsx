@@ -2,15 +2,15 @@ import React, { useContext, useEffect, useState } from 'react';
 import { Text, View, TouchableOpacity, StyleSheet, Dimensions, ScrollView } from 'react-native';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import axios from 'axios';
 import { COLORS } from '../../../theme/theme';
 import { NavigationProp, useNavigation } from '@react-navigation/native';
 import { RootStackParamList } from '../../../navigators/types';
-import { AppContext } from '../../../store/AppContext';
-import { ApiContext } from '../../../store/ApiContext';
+import { AppContext } from '../../../contexts/AppContext';
+import { ApiContext } from '../../../contexts/ApiContext';
 import { CustomInput, Loader, WrapperContainer } from '../../../components';
 import { IDelivery } from '../types/types';
 import { Header } from '../components';
+import { getRequest } from '../service/apiService';
 
 const windowWidth = Dimensions.get('window').width;
 
@@ -34,10 +34,10 @@ const DeliveryList = () => {
 
         try {
             const url = `${apiUrl?.url}/GetDeliveryNote1?ClId=${currentUser?.CLID}&AuthCode=${currentUser?.OTP}&databaseKey=${apiUrl?.databaseKey}`;
-            const response = await axios.get(url);
-            if (response && response.data && response.data.GetDeliveryNote1js.Table.length > 0) {
-                setDeliveryList(response.data.GetDeliveryNote1js.Table);
-                setTempDeliveryList(response.data.GetDeliveryNote1js.Table);
+            const response = await getRequest(url);
+            if (response && response.GetDeliveryNote1js.Table.length > 0) {
+                setDeliveryList(response.GetDeliveryNote1js.Table);
+                setTempDeliveryList(response.GetDeliveryNote1js.Table);
             }
             setIsLoading(false);
         } catch (error) {
